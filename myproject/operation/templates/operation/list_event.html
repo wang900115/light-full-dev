@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            margin: 20px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .query-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .update-btn {
+            background-color: #ffa500;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        form {
+            display: inline;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .edit-form-row {
+            display: none;
+            background-color: #f9f9f9;
+        }
+
+        .edit-form-row input {
+            margin: 5px;
+        }
+    </style>
+    <script>
+        // 顯示/隱藏修改表單
+        function toggleEditForm(uid) {
+            const formRow = document.getElementById(`edit-form-row-${uid}`);
+            const isVisible = formRow.style.display === "table-row";
+            
+            // 隱藏所有表單
+            document.querySelectorAll(".edit-form-row").forEach(row => row.style.display = "none");
+            
+            // 顯示當前表單
+            formRow.style.display = isVisible ? "none" : "table-row";
+        }
+    </script>
+</head>
+<body>
+    <h1>所有 Event 資料</h1>
+
+    {% if user.is_authenticated %}
+        <p>歡迎, {{ user.username }}！<a href="{% url 'logout' %}">登出</a></p>
+    {% else %}
+        <p>您尚未登入。請 <a href="{% url 'login' %}">登入</a></p>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>UID</th>
+                <th>標題</th>
+                <th>開始日期</th>
+                <th>結束日期</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>{{ event.uid }}</td>
+                <td>{{ event.title }}</td>
+                <td>{{ event.startdate|slice:":4" }}/{{ event.startdate|slice:"5:7" }}/{{ event.startdate|slice:"8:10" }}</td>
+                <td>{{ event.enddate|slice:":4" }}/{{ event.enddate|slice:"5:7" }}/{{ event.enddate|slice:"8:10" }}</td>
+                <td>
+                    <!-- 查詢場次操作 -->
+                    <form action="{% url 'query-event-shows' event.uid %}" method="GET">
+                        <button class="query-btn">查詢場次</button>
+                    </form>
+
+                    <!-- 僅已登入用戶可見的操作 -->
+                    {% if user.is_authenticated %}
+                        <button class="update-btn" onclick="toggleEditForm('{{ event.uid }}')">修改</button>
+                        <form action="{% url 'delete-event' event.uid %}" method="POST">
+                            {% csrf_token %}
+                            <button class="delete-btn">刪除</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <!-- 動態生成的修改表單 -->
+            <tr id="edit-form-row-{{ event.uid }}" class="edit-form-row">
+                <td colspan="5">
+                    <form action="{% url 'update-event' event.uid %}" method="POST">
+                        {% csrf_token %}
+                        <label for="title-{{ event.uid }}">標題:</label>
+                        <input type="text" id="title-{{ event.uid }}" name="title" value="{{ event.title }}" required>
+                        <label for="startdate-{{ event.uid }}">開始日期:</label>
+                        <input type="date" id="startdate-{{ event.uid }}" name="startdate" value="{{ event.startdate }}">
+                        <label for="enddate-{{ event.uid }}">結束日期:</label>
+                        <input type="date" id="enddate-{{ event.uid }}" name="enddate" value="{{ event.enddate }}">
+                        <button type="submit" class="update-btn">提交修改</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

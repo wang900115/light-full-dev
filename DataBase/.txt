@@ -1,0 +1,5 @@
+1. SQL 和 NoSQL 的差異有很多，SQL 以 Table 的形式去存取資料，設計嚴格。而NoSQL設計上較不嚴謹，可以自行掌握結構
+   NoSQL 比 SQL 更容易達到擴展的特性，因為SQL採用B-tree 而 NoSQL 採用 Hashtable 。
+
+2. 資料庫正規化是一種減少資料庫中數據的不完整，增進數據一致性的technique，如果正規劃過高，會導致Table增加(IO-busy)。
+

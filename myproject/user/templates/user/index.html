@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .welcome-container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-container h1 {
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .welcome-container a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .login-link {
+            background-color: #4CAF50;
+        }
+
+        .browse-link {
+            background-color: #007BFF;
+        }
+
+        .welcome-container a:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <h1>Welcome, guest! Please choose an option:</h1>
+        <a href="{% url 'login' %}" class="login-link">Login</a>
+        <a href="{% url 'list-event' %}" class="browse-link">Continue as Guest</a>
+    </div>
+</body>
+</html>
